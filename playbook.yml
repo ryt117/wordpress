@@ -1,0 +1,60 @@
+- hosts: client_node
+  become: true
+  tasks:
+    # enable php
+    - name: Enable PHP 8.2 repository
+      shell: amazon-linux-extras enable php8.2
+
+
+    # パッケージインストール
+    - name: install packages
+      yum:
+        name:
+          - httpd
+          - php
+          - php-mbstring
+          - php-xml
+          - php-mysqli
+        state: present
+
+    # WordPressダウンロード
+    - name: download wp
+      get_url:
+        url: http://ja.wordpress.org/latest-ja.tar.gz
+        dest: /tmp/latest-ja.tar.gz
+
+    # WordPress展開
+    - name: extract wp
+      unarchive:
+        src: /tmp/latest-ja.tar.gz
+        dest: /tmp
+        remote_src: yes
+
+    # ドキュメントルートに配置
+    - name: cp wp
+      copy:
+        src: /tmp/wordpress/
+        dest: /var/www/html/
+        remote_src: yes
+    
+    # ヘルスチェック用ファイル作成
+    - name: create health check file
+      file:
+        path: /var/www/html/.check_alive
+        state: touch
+
+    # Apacheユーザー設定
+    - name: user setting
+      file:
+        path: /var/www/html
+        state: directory
+        owner: apache
+        group: apache
+        recurse: yes
+
+    # Apache起動と有効化    
+    - name: apache start / enable
+      service:
+        name: httpd
+        state: started
+        enabled: yes
