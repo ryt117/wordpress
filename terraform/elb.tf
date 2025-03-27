@@ -10,14 +10,31 @@ resource "aws_lb" "alb" {
   enable_deletion_protection = false
 } 
 
+resource "aws_lb_listener" "https_listner" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn = "arn:aws:acm:ap-northeast-1:" # ALBリージョンの証明書
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.lb_tg.arn
+  }
+}
+
 resource "aws_lb_listener" "http_listner" {
   load_balancer_arn = aws_lb.alb.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
-    type = "forward"
-    target_group_arn = aws_lb_target_group.lb_tg.arn
+    type             = "redirect"
+    redirect {
+      protocol = "HTTPS"
+      port     = "443"
+      status_code = "HTTP_301"
+    }
   }
 }
 
@@ -28,7 +45,7 @@ resource "aws_lb_target_group" "lb_tg" {
   vpc_id = aws_vpc.main.id
 
   health_check {
-    path = "/.check_alive"
+    path = "/health"
   }
 }
 
@@ -52,6 +69,13 @@ resource "aws_security_group" "alb_sg" {
   ingress {
     from_port   = 80
     to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
