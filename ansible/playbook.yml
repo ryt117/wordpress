@@ -2,7 +2,7 @@
   become: true
   tasks:
     # enable php
-    - name: Enable PHP 8.2 repository
+    - name: Enable PHP 7.2 repository
       shell: amazon-linux-extras enable php8.2
 
 
