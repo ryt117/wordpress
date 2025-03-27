@@ -9,7 +9,7 @@ data "aws_ami" "latest_amazon_linux" {
 
 # キーペア
 resource "aws_key_pair" "key_pair" {
-  key_name = "teraterm_key"
+  key_name = "ssh_key"
   public_key = file("C:/Users/xxxxxx") # キーペアファイル  
 }
 
