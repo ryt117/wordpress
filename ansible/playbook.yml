@@ -2,8 +2,8 @@
   become: true
   tasks:
     # enable php
-    - name: Enable PHP 7.2 repository
-      shell: amazon-linux-extras enable php8.2
+    - name: Enable PHP 8.2 repository
+      command: amazon-linux-extras enable php8.2
 
 
     # パッケージインストール
@@ -40,7 +40,7 @@
     # ヘルスチェック用ファイル作成
     - name: create health check file
       file:
-        path: /var/www/html/.check_alive
+        path: /var/www/html/health
         state: touch
 
     # Apacheユーザー設定

@@ -1,6 +1,8 @@
 name: Deploy Terraform Configuration
 
-on: push
+# on: 
+#   push:
+#   workflow_dispatch: # 手動トリガーを追加
 
 jobs:
   deploy-terraform:
@@ -24,10 +26,10 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Initialize Terraform
-      run: terraform init
+      run: cd terraform && terraform init
 
     - name: Terraform Plan
-      run: terraform plan -out=plan.out
+      run: cd terraform && terraform plan
 
     - name: Terraform Apply
-      run: terraform apply -auto-approve plan.out
+      run: cd terraform && terraform apply -auto-approve

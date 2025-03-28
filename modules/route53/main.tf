@@ -7,8 +7,8 @@ resource "aws_route53_record" "test_record" {
   name    = "example.com"
   type    = "A"
   alias {
-    name                   = aws_cloudfront_distribution.test_cf.domain_name
-    zone_id                = aws_cloudfront_distribution.test_cf.hosted_zone_id
+    name                   = var.cloudfront_dns
+    zone_id                = "Z2FDTNDATAQYW2" # CloudFrontのホストゾーンID
     evaluate_target_health = false
   }
 }

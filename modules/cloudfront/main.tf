@@ -1,7 +1,7 @@
 resource "aws_cloudfront_distribution" "test_cf" {
   origin {
-    domain_name = aws_lb.alb.dns_name
-    origin_id   = aws_lb.alb.dns_name
+    domain_name = var.alb_dns
+    origin_id   = var.alb_dns
     custom_origin_config {
       origin_protocol_policy    = "https-only"
       https_port                = 443
@@ -15,7 +15,7 @@ resource "aws_cloudfront_distribution" "test_cf" {
     cached_methods   = ["GET", "HEAD"]
     cache_policy_id  = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Caching Disabled
     origin_request_policy_id = "216adef6-5c7f-47e4-b989-5492eafa07d3" # All Viewer
-    target_origin_id = aws_lb.alb.dns_name
+    target_origin_id = var.alb_dns
     viewer_protocol_policy = "redirect-to-https"
   }
 
@@ -25,7 +25,7 @@ resource "aws_cloudfront_distribution" "test_cf" {
 
   aliases = ["example.com"]
   viewer_certificate {
-    acm_certificate_arn = "arn:aws:acm:us-east-1:" # us-east-1の証明書
+    acm_certificate_arn = "arn:aws:acm:us-east-1:hogehoge" # us-east-1の証明書
     ssl_support_method = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }

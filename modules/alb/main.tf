@@ -3,10 +3,7 @@ resource "aws_lb" "alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [
-    aws_subnet.public1.id,
-    aws_subnet.public2.id
-  ]
+  subnets            = [var.public_subnet1_id, var.public_subnet2_id]
   enable_deletion_protection = false
 } 
 
@@ -15,7 +12,7 @@ resource "aws_lb_listener" "https_listner" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn = "arn:aws:acm:ap-northeast-1:" # ALBリージョンの証明書
+  certificate_arn = "arn:aws:acm:ap-northeast-1:hogehoge" # ALBリージョンの証明書
 
   default_action {
     type = "forward"
@@ -42,7 +39,7 @@ resource "aws_lb_target_group" "lb_tg" {
   name = "test-lb-tg"
   port = 80
   protocol = "HTTP"
-  vpc_id = aws_vpc.main.id
+  vpc_id = var.vpc_id
 
   health_check {
     path = "/health"
@@ -51,20 +48,20 @@ resource "aws_lb_target_group" "lb_tg" {
 
 resource "aws_lb_target_group_attachment" "instance1" {
   target_group_arn = aws_lb_target_group.lb_tg.arn
-  target_id = aws_instance.instance1.id
+  target_id = var.instance1_id
   port = 80
 }
 
 resource "aws_lb_target_group_attachment" "instance2" {
   target_group_arn = aws_lb_target_group.lb_tg.arn
-  target_id = aws_instance.instance2.id
+  target_id = var.instance2_id
   port = 80
 }
 
 resource "aws_security_group" "alb_sg" {
   name = "alb-sg"
   description = "Allow HTTP and SSH"
-  vpc_id = aws_vpc.main.id
+  vpc_id = var.vpc_id
   
   ingress {
     from_port   = 80
