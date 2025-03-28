@@ -58,10 +58,10 @@ module "route53" {
 
 terraform {
   backend "s3" {
-    bucket         = "your-s3-bucket-name"   
-    key            = "terraform/state.tfstate" 
-    region         = "hogehoge"          
-    encrypt        = true                   
-    dynamodb_table = "hogehoge" 
+    bucket         = module.backend.s3_bucket
+    key            = "terraform/state.tfstate"
+    region         = "your-region"
+    encrypt        = true
+    dynamodb_table = module.backend.dynamodb_table
   }
 }
